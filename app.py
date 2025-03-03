@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from inventario import Inventario, Producto
+import os
 
 app = Flask(__name__)
 inventario = Inventario()
