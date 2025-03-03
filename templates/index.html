@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventario</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>📦 Inventario de Productos</h1>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p class="{{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <table>
+        <tr>
+            <th>Código</th>
+            <th>Categoría</th>
+            <th>Nombre</th>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Acciones</th>
+        </tr>
+        {% for producto in productos %}
+        <tr>
+            <td>{{ producto.codigo }}</td>
+            <td>{{ producto.categoria }}</td>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.cantidad }}</td>
+            <td>${{ producto.precio }}</td>
+            <td>
+                <a href="{{ url_for('modificar', codigo=producto.codigo) }}">✏️ Modificar</a>
+                <a href="{{ url_for('eliminar', codigo=producto.codigo) }}" onclick="return confirm('¿Seguro?')">❌ Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <a href="{{ url_for('agregar') }}">➕ Agregar Producto</a>
+</body>
+</html>
