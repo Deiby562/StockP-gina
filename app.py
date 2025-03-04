@@ -37,10 +37,10 @@ def eliminar_producto(codigo):
         mensaje = "Producto no encontrado."
     return redirect(url_for("index"))
 
-@app.route("/modificar", methods=["POST"])
+@app.route("/modificar_cantidad", methods=["POST"])
 def modificar_cantidad():
     codigo = request.form["codigo"]
-    cantidad_mod = request.form["cantidad_mod"]
+    cantidad_mod = int(request.form["cantidad_mod"])  # Convierte la cantidad a entero
 
     if inventario.modificar_cantidad(codigo, cantidad_mod):
         mensaje = "Cantidad modificada con éxito."
@@ -48,6 +48,7 @@ def modificar_cantidad():
         mensaje = "Error al modificar cantidad."
 
     return redirect(url_for("index"))
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
