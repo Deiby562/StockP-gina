@@ -33,9 +33,13 @@
             <td>{{ producto.cantidad }}</td>
             <td>${{ producto.precio }}</td>
             <td>
-               <a href="{{ url_for('modificar_producto', codigo=producto.codigo) }}">
-                <a href="{{ url_for('eliminar', codigo=producto.codigo) }}" onclick="return confirm('¿Seguro?')">❌ Eliminar</a>
-            </td>
+    <form action="{{ url_for('modificar_cantidad') }}" method="post">
+        <input type="hidden" name="codigo" value="{{ producto.codigo }}">
+        <input type="number" name="cantidad_mod" value="{{ producto.cantidad }}" min="0">
+        <button type="submit">✏️</button>
+    </form>
+</td>
+
         </tr>
         {% endfor %}
     </table>
