@@ -1,5 +1,6 @@
 import os
 import csv
+import json
 
 class Producto:
     def __init__(self, codigo, categoria, nombre, cantidad, precio):
@@ -15,6 +16,15 @@ class Producto:
                 f"Categoría: {self.categoria}\n"
                 f"Cantidad: {self.cantidad} unidades\n"
                 f"Precio: ${self.precio:.3f}")
+
+    def to_dict(self):
+        return {
+            "codigo": self.codigo,
+            "categoria": self.categoria,
+            "nombre": self.nombre,
+            "cantidad": self.cantidad,
+            "precio": self.precio
+        }
 
     @staticmethod
     def _convertir_entero(valor):
@@ -57,7 +67,7 @@ class Inventario:
         return False
 
     def obtener_productos(self):
-        return list(self.productos.values())
+        return [p.to_dict() for p in self.productos.values()]
 
     def modificar_cantidad(self, codigo, cantidad_mod):
         if codigo in self.productos:
@@ -75,8 +85,19 @@ class Inventario:
             return True
         return False
 
+    def modificar_precio(self, codigo, nuevo_precio):
+        if codigo in self.productos:
+            nuevo_precio = Producto._convertir_float(nuevo_precio)
+            if nuevo_precio <= 0:
+                return False
+            self.productos[codigo].precio = nuevo_precio
+            self.guardar_en_csv()
+            return True
+        return False
+
     def cargar_desde_csv(self):
         if not os.path.exists(self.archivo_csv):
+            print("⚠️ Archivo CSV no encontrado. Se creará uno nuevo.")
             return
         try:
             with open(self.archivo_csv, mode="r", encoding="utf-8") as archivo:
