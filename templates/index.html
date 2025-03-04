@@ -39,6 +39,7 @@
     
     <div class="submenu" id="submenu">
         <h2 id="submenuTitle"></h2>
+        <div id="submenuContent"></div>
         <button onclick="volverMenu()">Volver al Menú Principal</button>
     </div>
 
@@ -47,6 +48,40 @@
             document.getElementById("mainMenu").style.display = "none";
             document.getElementById("submenu").style.display = "flex";
             document.getElementById("submenuTitle").innerText = `Menú: ${opcion.replace(/^./, opcion[0].toUpperCase())}`;
+            
+            let content = "";
+            switch (opcion) {
+                case 'agregar':
+                    content = `<form>
+                        <input type='text' placeholder='Código' required><br>
+                        <input type='text' placeholder='Categoría' required><br>
+                        <input type='text' placeholder='Nombre' required><br>
+                        <input type='number' placeholder='Cantidad' required><br>
+                        <input type='text' placeholder='Precio' required><br>
+                        <button type='submit'>Agregar Producto</button>
+                    </form>`;
+                    break;
+                case 'buscar':
+                    content = `<input type='text' placeholder='Ingrese código, nombre o categoría'>
+                    <button>Buscar</button>`;
+                    break;
+                case 'eliminar':
+                    content = `<input type='text' placeholder='Ingrese código del producto'>
+                    <button>Eliminar</button>`;
+                    break;
+                case 'listar':
+                    content = `<table border='1'>
+                        <tr><th>Código</th><th>Categoría</th><th>Nombre</th><th>Cantidad</th><th>Precio</th></tr>
+                        <tr><td>001</td><td>Ejemplo</td><td>Producto A</td><td>10</td><td>$15.00</td></tr>
+                    </table>`;
+                    break;
+                case 'modificar':
+                    content = `<input type='text' placeholder='Ingrese código del producto'>
+                    <input type='number' placeholder='Nueva cantidad'>
+                    <button>Modificar</button>`;
+                    break;
+            }
+            document.getElementById("submenuContent").innerHTML = content;
         }
 
         function volverMenu() {
