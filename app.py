@@ -50,7 +50,7 @@ def agregar():
     return redirect(url_for('index'))
 
 @app.route('/eliminar/<codigo>', methods=['POST'])
-def eliminar(codigo):
+def eliminar_producto(codigo):
     productos = [p for p in cargar_productos() if p['codigo'] != codigo]
     guardar_productos(productos)
     return redirect(url_for('index'))
