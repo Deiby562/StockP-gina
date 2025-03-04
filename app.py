@@ -56,7 +56,7 @@ def eliminar(codigo):
     return redirect(url_for('index'))
 
 @app.route('/modificar/<codigo>', methods=['POST'])
-def modificar(codigo):
+def modificar_producto(codigo):
     cantidad_nueva = int(request.form['cantidad'])
     productos = cargar_productos()
     for p in productos:
