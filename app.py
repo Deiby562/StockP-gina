@@ -1,54 +1,70 @@
 from flask import Flask, render_template, request, redirect, url_for
-from inventario import Inventario, Producto
+import csv
 import os
 
 app = Flask(__name__)
-inventario = Inventario()
+ARCHIVO_CSV = "Inventarioproductos.csv"
 
-@app.route("/")
+def cargar_productos():
+    productos = []
+    if os.path.exists(ARCHIVO_CSV):
+        with open(ARCHIVO_CSV, mode="r", encoding="utf-8") as archivo:
+            lector = csv.reader(archivo, delimiter=";")
+            next(lector, None)
+            for linea in lector:
+                if len(linea) == 5:
+                    codigo, categoria, nombre, cantidad, precio = linea
+                    productos.append({
+                        "codigo": codigo,
+                        "categoria": categoria,
+                        "nombre": nombre,
+                        "cantidad": int(cantidad),
+                        "precio": float(precio)
+                    })
+    return productos
+
+def guardar_productos(productos):
+    with open(ARCHIVO_CSV, mode="w", newline="", encoding="utf-8") as archivo:
+        escritor = csv.writer(archivo, delimiter=";")
+        escritor.writerow(["Código", "Categoría", "Nombre", "Cantidad", "Precio"])
+        for p in productos:
+            escritor.writerow([p["codigo"], p["categoria"], p["nombre"], p["cantidad"], f"{p['precio']:.2f}"])
+
+@app.route('/')
 def index():
-    productos = inventario.obtener_productos()
-    return render_template("index.html", productos=productos)
+    productos = cargar_productos()
+    return render_template('index.html', productos=productos)
 
-@app.route("/agregar", methods=["POST"])
-def agregar_producto():
-    codigo = request.form["codigo"]
-    categoria = request.form["categoria"]
-    nombre = request.form["nombre"]
-    cantidad = request.form["cantidad"]
-    precio = request.form["precio"]
+@app.route('/agregar', methods=['POST'])
+def agregar():
+    codigo = request.form['codigo']
+    categoria = request.form['categoria']
+    nombre = request.form['nombre']
+    cantidad = int(request.form['cantidad'])
+    precio = float(request.form['precio'])
+    
+    productos = cargar_productos()
+    productos.append({"codigo": codigo, "categoria": categoria, "nombre": nombre, "cantidad": cantidad, "precio": precio})
+    guardar_productos(productos)
+    
+    return redirect(url_for('index'))
 
-    nuevo_producto = Producto(codigo, categoria, nombre, cantidad, precio)
-    inventario.agregar_producto(nuevo_producto)
+@app.route('/eliminar/<codigo>', methods=['POST'])
+def eliminar(codigo):
+    productos = [p for p in cargar_productos() if p['codigo'] != codigo]
+    guardar_productos(productos)
+    return redirect(url_for('index'))
 
-    return redirect(url_for("index"))
+@app.route('/modificar/<codigo>', methods=['POST'])
+def modificar(codigo):
+    cantidad_nueva = int(request.form['cantidad'])
+    productos = cargar_productos()
+    for p in productos:
+        if p['codigo'] == codigo:
+            p['cantidad'] = cantidad_nueva
+            break
+    guardar_productos(productos)
+    return redirect(url_for('index'))
 
-@app.route("/buscar", methods=["POST"])
-def buscar_producto():
-    criterio = request.form["criterio"]
-    productos_encontrados = inventario.buscar_producto(criterio)
-    return render_template("index.html", productos=productos_encontrados)
-
-@app.route("/eliminar/<codigo>")
-def eliminar_producto(codigo):
-    if inventario.eliminar_producto(codigo):
-        mensaje = "Producto eliminado correctamente."
-    else:
-        mensaje = "Producto no encontrado."
-    return redirect(url_for("index"))
-
-@app.route("/modificar_cantidad", methods=["POST"])
-def modificar_cantidad():
-    codigo = request.form["codigo"]
-    cantidad_mod = int(request.form["cantidad_mod"])  # Convierte la cantidad a entero
-
-    if inventario.modificar_cantidad(codigo, cantidad_mod):
-        mensaje = "Cantidad modificada con éxito."
-    else:
-        mensaje = "Error al modificar cantidad."
-
-    return redirect(url_for("index"))
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)
