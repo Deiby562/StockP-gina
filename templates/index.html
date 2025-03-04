@@ -2,64 +2,83 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Inventario de Productos</title>
-    <style>
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid black; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .acciones button { margin-right: 5px; }
-    </style>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-    <h1>Inventario de Productos</h1>
-    
-    <h2>Agregar Producto</h2>
-    <form action="/agregar" method="post">
-        <input type="text" name="codigo" placeholder="Código" required>
-        <input type="text" name="categoria" placeholder="Categoría" required>
-        <input type="text" name="nombre" placeholder="Nombre" required>
-        <input type="number" name="cantidad" placeholder="Cantidad" required>
-        <input type="number" step="0.01" name="precio" placeholder="Precio" required>
-        <button type="submit">Agregar</button>
-    </form>
+<body class="bg-light">
+    <div class="container mt-4">
+        <h1 class="text-center text-primary">📦 Inventario de Productos</h1>
 
-    <h2>Buscar Producto</h2>
-    <form action="/buscar" method="get">
-        <input type="text" name="criterio" placeholder="Código, nombre o categoría" required>
-        <button type="submit">Buscar</button>
-    </form>
-    
-    <h2>Lista de Productos</h2>
-    <table>
-        <tr>
-            <th>Código</th>
-            <th>Categoría</th>
-            <th>Nombre</th>
-            <th>Cantidad</th>
-            <th>Precio</th>
-            <th>Acciones</th>
-        </tr>
-        {% for producto in productos %}
-        <tr>
-            <td>{{ producto.codigo }}</td>
-            <td>{{ producto.categoria }}</td>
-            <td>{{ producto.nombre }}</td>
-            <td>{{ producto.cantidad }}</td>
-            <td>${{ producto.precio }}</td>
-            <td class="acciones">
-                <form action="/modificar" method="post" style="display:inline;">
-                    <input type="hidden" name="codigo" value="{{ producto.codigo }}">
-                    <input type="number" name="cantidad" value="{{ producto.cantidad }}" required>
-                    <button type="submit">Actualizar</button>
-                </form>
-                <form action="/eliminar" method="post" style="display:inline;">
-                    <input type="hidden" name="codigo" value="{{ producto.codigo }}">
-                    <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar este producto?')">Eliminar</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+        <!-- Formulario para agregar productos -->
+        <div class="card p-4 mt-4">
+            <h3>Agregar Producto</h3>
+            <form action="/agregar" method="post">
+                <div class="row">
+                    <div class="col-md-2">
+                        <input type="text" name="codigo" class="form-control" placeholder="Código" required>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="text" name="categoria" class="form-control" placeholder="Categoría" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="nombre" class="form-control" placeholder="Nombre" required>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" name="cantidad" class="form-control" placeholder="Cantidad" required>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" step="0.01" name="precio" class="form-control" placeholder="Precio" required>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="submit" class="btn btn-success">➕</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabla de productos -->
+        <div class="mt-4">
+            <h3>Lista de Productos</h3>
+            <table class="table table-striped table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Código</th>
+                        <th>Categoría</th>
+                        <th>Nombre</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                    <tr>
+                        <td>{{ producto.codigo }}</td>
+                        <td>{{ producto.categoria }}</td>
+                        <td>{{ producto.nombre }}</td>
+                        <td>{{ producto.cantidad }}</td>
+                        <td>${{ producto.precio }}</td>
+                        <td>
+                            <div class="d-flex">
+                                <form action="{{ url_for('modificar_cantidad', codigo=producto.codigo) }}" method="post" class="me-2">
+                                    <input type="number" name="cantidad" class="form-control d-inline-block w-50" placeholder="Nueva Cantidad" required>
+                                    <button type="submit" class="btn btn-warning btn-sm">✏️ Modificar</button>
+                                </form>
+                                <form action="{{ url_for('eliminar_producto', codigo=producto.codigo) }}" method="post">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que deseas eliminar este producto?')">❌ Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
