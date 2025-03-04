@@ -33,7 +33,7 @@
             <td>{{ producto.cantidad }}</td>
             <td>${{ producto.precio }}</td>
             <td>
-                <a href="{{ url_for('modificar', codigo=producto.codigo) }}">✏️ Modificar</a>
+               <a href="{{ url_for('modificar_producto', codigo=producto.codigo) }}">
                 <a href="{{ url_for('eliminar', codigo=producto.codigo) }}" onclick="return confirm('¿Seguro?')">❌ Eliminar</a>
             </td>
         </tr>
