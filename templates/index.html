@@ -2,83 +2,61 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Inventario de Productos</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Inventario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .menu, .submenu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .menu button, .submenu button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .submenu {
+            display: none;
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <div class="container mt-4">
-        <h1 class="text-center text-primary">📦 Inventario de Productos</h1>
-
-        <!-- Formulario para agregar productos -->
-        <div class="card p-4 mt-4">
-            <h3>Agregar Producto</h3>
-            <form action="/agregar" method="post">
-                <div class="row">
-                    <div class="col-md-2">
-                        <input type="text" name="codigo" class="form-control" placeholder="Código" required>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="text" name="categoria" class="form-control" placeholder="Categoría" required>
-                    </div>
-                    <div class="col-md-3">
-                        <input type="text" name="nombre" class="form-control" placeholder="Nombre" required>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="number" name="cantidad" class="form-control" placeholder="Cantidad" required>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="number" step="0.01" name="precio" class="form-control" placeholder="Precio" required>
-                    </div>
-                    <div class="col-md-1">
-                        <button type="submit" class="btn btn-success">➕</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <!-- Tabla de productos -->
-        <div class="mt-4">
-            <h3>Lista de Productos</h3>
-            <table class="table table-striped table-bordered">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Código</th>
-                        <th>Categoría</th>
-                        <th>Nombre</th>
-                        <th>Cantidad</th>
-                        <th>Precio</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for producto in productos %}
-                    <tr>
-                        <td>{{ producto.codigo }}</td>
-                        <td>{{ producto.categoria }}</td>
-                        <td>{{ producto.nombre }}</td>
-                        <td>{{ producto.cantidad }}</td>
-                        <td>${{ producto.precio }}</td>
-                        <td>
-                            <div class="d-flex">
-                                <form action="{{ url_for('modificar_cantidad', codigo=producto.codigo) }}" method="post" class="me-2">
-                                    <input type="number" name="cantidad" class="form-control d-inline-block w-50" placeholder="Nueva Cantidad" required>
-                                    <button type="submit" class="btn btn-warning btn-sm">✏️ Modificar</button>
-                                </form>
-                                <form action="{{ url_for('eliminar_producto', codigo=producto.codigo) }}" method="post">
-                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que deseas eliminar este producto?')">❌ Eliminar</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+<body>
+    <h1>Gestión de Inventario</h1>
+    <div class="menu" id="mainMenu">
+        <button onclick="mostrarSubmenu('agregar')">Agregar Producto</button>
+        <button onclick="mostrarSubmenu('buscar')">Buscar Producto</button>
+        <button onclick="mostrarSubmenu('eliminar')">Eliminar Producto</button>
+        <button onclick="mostrarSubmenu('listar')">Listar Productos</button>
+        <button onclick="mostrarSubmenu('modificar')">Modificar Cantidad</button>
+        <button onclick="salir()">Salir</button>
+    </div>
+    
+    <div class="submenu" id="submenu">
+        <h2 id="submenuTitle"></h2>
+        <button onclick="volverMenu()">Volver al Menú Principal</button>
     </div>
 
-    <!-- Bootstrap JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function mostrarSubmenu(opcion) {
+            document.getElementById("mainMenu").style.display = "none";
+            document.getElementById("submenu").style.display = "flex";
+            document.getElementById("submenuTitle").innerText = `Menú: ${opcion.replace(/^./, opcion[0].toUpperCase())}`;
+        }
+
+        function volverMenu() {
+            document.getElementById("submenu").style.display = "none";
+            document.getElementById("mainMenu").style.display = "flex";
+        }
+
+        function salir() {
+            alert("Saliendo del sistema");
+        }
+    </script>
 </body>
 </html>
