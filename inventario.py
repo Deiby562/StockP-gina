@@ -40,6 +40,7 @@ class Producto:
         except ValueError:
             return 0.0
 
+
 class Inventario:
     def __init__(self, archivo_csv="Inventarioproductos.csv"):
         self.archivo_csv = archivo_csv
@@ -50,21 +51,21 @@ class Inventario:
         self.productos[producto.codigo] = producto
         self.guardar_en_csv()
 
-def buscar_producto(self, criterio):
-    criterio = criterio.strip().lower()
-    resultados = [
-        p for p in self.productos.values()
-        if (p.codigo.lower() == criterio or
-            criterio in p.nombre.lower() or 
-            criterio in p.categoria.lower())
-    ]
-    if resultados:
-        print("\n✅ Productos encontrados:\n")
-        for producto in resultados:
-            print(producto)
-            print("\n" + "-" * 50 + "\n")
-    else:
-        print("⚠️ Producto no encontrado.")
+    def buscar_producto(self, criterio):
+        criterio = criterio.strip().lower()
+        resultados = [
+            p for p in self.productos.values()
+            if (p.codigo.lower() == criterio or
+                criterio in p.nombre.lower() or 
+                criterio in p.categoria.lower())
+        ]
+        if resultados:
+            print("\n✅ Productos encontrados:\n")
+            for producto in resultados:
+                print(producto)
+                print("\n" + "-" * 50 + "\n")
+        else:
+            print("⚠️ Producto no encontrado.")
 
     def listar_productos(self):
         if not self.productos:
@@ -120,15 +121,15 @@ def buscar_producto(self, criterio):
             return
         try:
             with open(self.archivo_csv, mode="r", encoding="utf-8") as archivo:
-                        print("📂 Cargando CSV...")  
-        print("Productos antes de cargar:", len(self.productos))  
+                print("📂 Cargando CSV...")  
+                print("Productos antes de cargar:", len(self.productos))  
                 lector = csv.reader(archivo, delimiter=";")
                 next(lector, None)
                 for linea in lector:
                     if len(linea) == 5:
                         codigo, categoria, nombre, cantidad, precio = linea
                         self.productos[codigo] = Producto(codigo, categoria, nombre, cantidad, precio)
-                         print("Productos cargados:", len(self.productos))
+                print("Productos cargados:", len(self.productos))
         except Exception as e:
             print(f"❌ Error al cargar el CSV: {e}")
 
