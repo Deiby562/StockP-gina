@@ -36,8 +36,8 @@ def index():
 
 @app.route('/listar', methods=['GET'])
 def listar_productos():
-    productos = cargar_productos()  # Usa la función correcta
-    return jsonify(productos)  # Devuelve JSON
+    productos = cargar_productos()  
+    return jsonify(productos)  
 
 @app.route('/agregar', methods=['POST'])
 def agregar():
