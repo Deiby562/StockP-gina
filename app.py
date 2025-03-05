@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import csv
 import os
 
@@ -10,7 +10,7 @@ def cargar_productos():
     if os.path.exists(ARCHIVO_CSV):
         with open(ARCHIVO_CSV, mode="r", encoding="utf-8") as archivo:
             lector = csv.reader(archivo, delimiter=";")
-            next(lector, None)
+            next(lector, None)  # Saltar la cabecera
             for linea in lector:
                 if len(linea) == 5:
                     codigo, categoria, nombre, cantidad, precio = linea
@@ -32,8 +32,12 @@ def guardar_productos(productos):
 
 @app.route('/')
 def index():
-    productos = cargar_productos()
-    return render_template('index.html', productos=productos)
+    return render_template('index.html')
+
+@app.route('/listar', methods=['GET'])
+def listar_productos():
+    productos = cargar_productos()  # Usa la función correcta
+    return jsonify(productos)  # Devuelve JSON
 
 @app.route('/agregar', methods=['POST'])
 def agregar():
@@ -49,11 +53,6 @@ def agregar():
     
     return redirect(url_for('index'))
 
-@app.route('/listar', methods=['GET'])
-def listar_productos():
-    productos = inventario.obtener_productos()  # Obtiene los productos en formato diccionario
-    return jsonify(productos)
-    
 @app.route('/eliminar/<codigo>', methods=['POST'])
 def eliminar_producto(codigo):
     productos = [p for p in cargar_productos() if p['codigo'] != codigo]
