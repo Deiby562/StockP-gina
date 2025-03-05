@@ -50,14 +50,33 @@ class Inventario:
         self.productos[producto.codigo] = producto
         self.guardar_en_csv()
 
-    def buscar_producto(self, criterio):
-        criterio = criterio.strip().lower()
-        return [
-            p for p in self.productos.values()
-            if (p.codigo.lower() == criterio or
-                criterio in p.nombre.lower() or 
-                criterio in p.categoria.lower())
-        ]
+def buscar_producto(self, criterio):
+    criterio = criterio.strip().lower()
+    resultados = [
+        p for p in self.productos.values()
+        if (p.codigo.lower() == criterio or
+            criterio in p.nombre.lower() or 
+            criterio in p.categoria.lower())
+    ]
+    if resultados:
+        print("\n✅ Productos encontrados:\n")
+        for producto in resultados:
+            print(producto)
+            print("\n" + "-" * 50 + "\n")
+    else:
+        print("⚠️ Producto no encontrado.")
+
+    def listar_productos(self):
+        if not self.productos:
+            print("⚠️ No hay productos en el inventario.")
+            return
+        
+        print("\n📦 Inventario de Productos:\n")
+        print(f"{'Código':<10}{'Categoría':<15}{'Nombre':<20}{'Cantidad':<10}{'Precio':<10}")
+        print("-" * 65)
+
+        for producto in self.productos.values():
+            print(f"{producto.codigo:<10}{producto.categoria:<15}{producto.nombre:<20}{producto.cantidad:<10}{producto.precio:<10.2f}")
 
     def eliminar_producto(self, codigo):
         if codigo in self.productos:
