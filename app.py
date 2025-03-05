@@ -6,6 +6,9 @@ app = Flask(__name__)
 ARCHIVO_CSV = "Inventarioproductos.csv"
 
 def cargar_productos():
+    """
+    Carga los productos desde el archivo CSV y los devuelve como una lista de diccionarios.
+    """
     productos = []
     if os.path.exists(ARCHIVO_CSV):
         with open(ARCHIVO_CSV, mode="r", encoding="utf-8") as archivo:
@@ -24,6 +27,9 @@ def cargar_productos():
     return productos
 
 def guardar_productos(productos):
+    """
+    Guarda la lista de productos en el archivo CSV.
+    """
     with open(ARCHIVO_CSV, mode="w", newline="", encoding="utf-8") as archivo:
         escritor = csv.writer(archivo, delimiter=";")
         escritor.writerow(["Código", "Categoría", "Nombre", "Cantidad", "Precio"])
@@ -32,15 +38,24 @@ def guardar_productos(productos):
 
 @app.route('/')
 def index():
+    """
+    Ruta principal que renderiza la página de inicio.
+    """
     return render_template('index.html')
 
 @app.route('/listar', methods=['GET'])
 def listar_productos():
+    """
+    Devuelve la lista de productos en formato JSON.
+    """
     productos = cargar_productos()  
     return jsonify(productos)  
 
 @app.route('/agregar', methods=['POST'])
 def agregar():
+    """
+    Agrega un nuevo producto al inventario y actualiza el archivo CSV.
+    """
     codigo = request.form['codigo']
     categoria = request.form['categoria']
     nombre = request.form['nombre']
@@ -55,12 +70,18 @@ def agregar():
 
 @app.route('/eliminar/<codigo>', methods=['POST'])
 def eliminar_producto(codigo):
+    """
+    Elimina un producto del inventario según su código y actualiza el archivo CSV.
+    """
     productos = [p for p in cargar_productos() if p['codigo'] != codigo]
     guardar_productos(productos)
     return redirect(url_for('index'))
 
 @app.route('/modificar/<codigo>', methods=['POST'])
 def modificar_cantidad(codigo):
+    """
+    Modifica la cantidad de un producto en el inventario y actualiza el CSV.
+    """
     cantidad_nueva = int(request.form['cantidad'])
     productos = cargar_productos()
     for p in productos:
