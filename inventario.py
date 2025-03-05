@@ -120,12 +120,15 @@ def buscar_producto(self, criterio):
             return
         try:
             with open(self.archivo_csv, mode="r", encoding="utf-8") as archivo:
+                        print("📂 Cargando CSV...")  
+        print("Productos antes de cargar:", len(self.productos))  
                 lector = csv.reader(archivo, delimiter=";")
                 next(lector, None)
                 for linea in lector:
                     if len(linea) == 5:
                         codigo, categoria, nombre, cantidad, precio = linea
                         self.productos[codigo] = Producto(codigo, categoria, nombre, cantidad, precio)
+                         print("Productos cargados:", len(self.productos))
         except Exception as e:
             print(f"❌ Error al cargar el CSV: {e}")
 
