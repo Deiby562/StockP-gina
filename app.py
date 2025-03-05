@@ -49,6 +49,11 @@ def agregar():
     
     return redirect(url_for('index'))
 
+@app.route('/listar', methods=['GET'])
+def listar_productos():
+    productos = inventario.obtener_productos()  # Obtiene los productos en formato diccionario
+    return jsonify(productos)
+    
 @app.route('/eliminar/<codigo>', methods=['POST'])
 def eliminar_producto(codigo):
     productos = [p for p in cargar_productos() if p['codigo'] != codigo]
