@@ -77,19 +77,27 @@ def eliminar_producto(codigo):
     guardar_productos(productos)
     return redirect(url_for('index'))
 
-@app.route('/modificar/<codigo>', methods=['POST'])
-def modificar_cantidad(codigo):
+@app.route('/modificar', methods=['POST'])
+def modificar_cantidad():
     """
     Modifica la cantidad de un producto en el inventario y actualiza el CSV.
     """
-    cantidad_nueva = int(request.form['cantidad'])
+    data = request.json
+    codigo = data.get("codigo")
+    cantidad_mod = int(data.get("cantidad"))
+    
     productos = cargar_productos()
     for p in productos:
         if p['codigo'] == codigo:
-            p['cantidad'] = cantidad_nueva
-            break
-    guardar_productos(productos)
-    return redirect(url_for('index'))
+            nueva_cantidad = p['cantidad'] + cantidad_mod
+            if nueva_cantidad >= 0:
+                p['cantidad'] = nueva_cantidad
+                guardar_productos(productos)
+                return jsonify({"success": True, "message": "Cantidad modificada exitosamente"})
+            else:
+                return jsonify({"success": False, "message": "Cantidad insuficiente"}), 400
+    
+    return jsonify({"success": False, "message": "Producto no encontrado"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True)
